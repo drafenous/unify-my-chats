@@ -1,0 +1,74 @@
+# ============================
+# Node / Monorepo genérico
+# ============================
+node_modules/
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnp.*
+.pnp.js
+
+# ============================
+# Next.js
+# ============================
+.next/
+out/
+# Build genéricos (se usar tsc ou scripts extras)
+build/
+dist/
+*.tsbuildinfo
+.swc/
+.eslintcache
+.turbo/
+.cache/
+
+# ============================
+# Testes / Cobertura
+# ============================
+coverage/
+.playwright-report/
+test-results/
+.cypress/
+
+# ============================
+# Variáveis de ambiente
+# (mantenha o .env.example versionado)
+# ============================
+.env
+.env.local
+.env.development
+.env.development.local
+.env.test
+.env.test.local
+.env.production
+.env.production.local
+!.env.example
+
+# ============================
+# Ferramentas de deploy
+# ============================
+.vercel/
+.netlify/
+
+# ============================
+# SO / Editores
+# ============================
+.DS_Store
+Thumbs.db
+
+# VSCode (mantenha recomendações, se quiser)
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/launch.json
+.idea/
+*.iml
+
+# ============================
+# Temporários
+# ============================
+tmp/
+temp/
