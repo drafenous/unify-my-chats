@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "app/api/aggregate/route.ts": { "maxDuration": 60 },
+    "app/api/kick/webhook/route.ts": { "maxDuration": 10 },
+    "app/api/kick/stream/route.ts": { "maxDuration": 60 }
+  }
+}

@@ -13,6 +13,8 @@ export default function Page() {
   const [connected, setConnected] = useState(false);
   const [feed, setFeed] = useState<UnifiedChatMessage[]>([]);
   const esRef = useRef<EventSource | null>(null);
+  const [kickConnected, setKickConnected] = useState(false);
+  const kickEsRef = useRef<EventSource | null>(null);
 
   const platformsSummary = useMemo(() => {
     const c: Record<string, number> = {};
@@ -51,29 +53,45 @@ export default function Page() {
     if (connected) return;
     const usable = sources.filter(s => ['twitch', 'youtube', 'kick'].includes(s.platform));
     if (usable.length === 0) {
-      alert('Adicione pelo menos uma URL válida de Twitch ou YouTube.');
+      alert('Adicione pelo menos uma URL válida de Twitch, Kick ou YouTube.');
       return;
     }
-    const url = `/api/aggregate?sources=${encodeURIComponent(b64(usable.map(u => u.url)))}`;
-    const es = new EventSource(url);
-    es.onopen = () => setConnected(true);
-    es.addEventListener('chat', (ev) => {
-      try {
+    const aggUsable = usable.filter(s => ['twitch', 'youtube'].includes(s.platform));
+    if (aggUsable.length) {
+      const url = `/api/aggregate?sources=${encodeURIComponent(b64(usable.map(u => u.url)))}`;
+      const es = new EventSource(url);
+      es.onopen = () => setConnected(true);
+      es.addEventListener('chat', (ev) => {
+        try {
+          const msg = JSON.parse((ev as MessageEvent).data) as UnifiedChatMessage;
+          setFeed(prev => [msg, ...prev].slice(0, 1000));
+        } catch { }
+      });
+      es.addEventListener('meta', (ev) => {
+        // could display meta if needed
+      });
+      es.addEventListener('info', (ev) => {
+        console.log('info', (ev as MessageEvent).data);
+      });
+      es.addEventListener('error', (ev) => {
+        console.warn('error', ev);
+      });
+      esRef.current = es;
+    }
+
+    const kickSlugs = usable.filter(s => s.platform === 'kick' && s.channel).map(s => s.channel as string);
+    if (kickSlugs.length) {
+      const url2 = `/api/kick/stream?slugs=${encodeURIComponent(b64(kickSlugs))}`;
+      const kes = new EventSource(url2);
+      kes.onopen = () => setKickConnected(true);
+      kes.addEventListener('chat', (ev) => {
         const msg = JSON.parse((ev as MessageEvent).data) as UnifiedChatMessage;
         setFeed(prev => [msg, ...prev].slice(0, 1000));
-      } catch { }
-    });
-    es.addEventListener('meta', (ev) => {
-      // could display meta if needed
-    });
-    es.addEventListener('info', (ev) => {
-      console.log('info', (ev as MessageEvent).data);
-    });
-    es.addEventListener('error', (ev) => {
-      console.warn('error', ev);
-    });
+      });
+      kickEsRef.current = kes;
+    }
+
     saveToLocalStorage()
-    esRef.current = es;
   }
 
   function disconnect() {
