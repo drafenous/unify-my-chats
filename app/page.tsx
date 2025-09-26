@@ -27,12 +27,12 @@ export default function Page() {
   }
 
   useEffect(() => {
-    loadFromSessionStorage();
+    loadFromLocalStorage();
   }, []);
 
-  function loadFromSessionStorage() {
+  function loadFromLocalStorage() {
     if (typeof window === 'undefined') return;
-    const saved = window.sessionStorage.getItem('sources');
+    const saved = window.localStorage.getItem('sources');
     if (saved) {
       try {
         const arr = JSON.parse(saved) as ParsedSource[];
@@ -42,9 +42,9 @@ export default function Page() {
     }
   }
 
-  function saveToSessionStorage() {
+  function saveToLocalStorage() {
     if (typeof window === 'undefined') return;
-    window.sessionStorage.setItem('sources', JSON.stringify(sources));
+    window.localStorage.setItem('sources', JSON.stringify(sources));
   }
 
   function connect() {
@@ -72,7 +72,7 @@ export default function Page() {
     es.addEventListener('error', (ev) => {
       console.warn('error', ev);
     });
-    saveToSessionStorage()
+    saveToLocalStorage()
     esRef.current = es;
   }
 
