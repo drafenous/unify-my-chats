@@ -1,7 +1,7 @@
 'use client';
 
 import './globals.css';
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { parseSource } from '@/lib/urlParser';
 import type { UnifiedChatMessage, ParsedSource } from '@/lib/types';
 
@@ -24,6 +24,27 @@ export default function Page() {
     const lines = input.split(/\n|,|\s/).map(s => s.trim()).filter(Boolean);
     const parsed = lines.map(parseSource);
     setSources(parsed);
+  }
+
+  useEffect(() => {
+    loadFromSessionStorage();
+  }, []);
+
+  function loadFromSessionStorage() {
+    if (typeof window === 'undefined') return;
+    const saved = window.sessionStorage.getItem('sources');
+    if (saved) {
+      try {
+        const arr = JSON.parse(saved) as ParsedSource[];
+        setSources(arr);
+        setInput(arr.map(a => a.url).join('\n'));
+      } catch { }
+    }
+  }
+
+  function saveToSessionStorage() {
+    if (typeof window === 'undefined') return;
+    window.sessionStorage.setItem('sources', JSON.stringify(sources));
   }
 
   function connect() {
@@ -51,6 +72,7 @@ export default function Page() {
     es.addEventListener('error', (ev) => {
       console.warn('error', ev);
     });
+    saveToSessionStorage()
     esRef.current = es;
   }
 
@@ -63,10 +85,10 @@ export default function Page() {
   return (
     <div className="container">
       <div className="card" style={{ marginBottom: 16 }}>
-        <h1>Live Chat Unifier <small className="muted">MVP (leitura apenas)</small></h1>
-        <p>Informe as URLs dos chats das lives (Twitch canal ou YouTube <em>vídeo</em> em live). Nenhum login é necessário. Envio de mensagens é propositalmente desativado.</p>
+        <h1>Unify My Chats <small className="muted">MVP (leitura apenas)</small></h1>
+        <p>Informe as URLs dos chats das lives (Twitch, Kick ou YouTube <em>vídeo</em> em live) separados por vírgula ou quebra de linha. Nenhum login é necessário. Envio de mensagens é propositalmente desativado.</p>
         <div className="row" style={{ marginTop: 12 }}>
-          <textarea className="input" rows={4} placeholder="Exemplos:\nhttps://www.twitch.tv/gaules\nhttps://www.youtube.com/watch?v=XXXXXXXXXXX" value={input} onChange={e => setInput(e.target.value)} />
+          <textarea className="input" rows={4} placeholder="Exemplos: https://www.twitch.tv/gaules, https://www.youtube.com/watch?v=XXXXXXXXXXX" value={input} onChange={e => setInput(e.target.value)} />
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8, minWidth: 180 }}>
             <button className="btn" onClick={detect}>Detectar plataformas</button>
             {!connected ? (

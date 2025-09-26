@@ -1,6 +1,6 @@
 export const metadata = {
-  title: "Live Chat Unifier (MVP)",
-  description: "Unifica chats ao vivo de Twitch e YouTube (leitura apenas).",
+  title: "Unify My Chats (MVP)",
+  description: "Unifica chats ao vivo de Twitch, YouTube e Kick (leitura apenas).",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
