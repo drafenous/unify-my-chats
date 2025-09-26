@@ -84,12 +84,16 @@ export default function Page() {
       const url = `/api/aggregate?sources=${encodeURIComponent(b64(aggUsable.map(u => u.url)))}`;
       const es = new EventSource(url);
       es.onopen = () => setConnected(true);
+      es.addEventListener('info', (ev) => {
+        try { console.log('twitch-info', JSON.parse((ev as MessageEvent).data)); } catch { }
+      });
       es.addEventListener('chat', (ev) => {
         try {
           const msg = JSON.parse((ev as MessageEvent).data) as UnifiedChatMessage;
           setFeed(prev => [msg, ...prev].slice(0, 1000));
         } catch { }
       });
+      es.addEventListener('error', (ev) => console.warn('twitch-error', ev));
       esRef.current = es;
     }
 
@@ -99,12 +103,16 @@ export default function Page() {
       const url2 = `/api/kick/stream?slugs=${encodeURIComponent(b64(kickSlugs))}`;
       const kes = new EventSource(url2);
       kes.onopen = () => setKickConnected(true);
+      kes.addEventListener('info', (ev) => {
+        try { console.log('kick-info', JSON.parse((ev as MessageEvent).data)); } catch { }
+      });
       kes.addEventListener('chat', (ev) => {
         try {
           const msg = JSON.parse((ev as MessageEvent).data) as UnifiedChatMessage;
           setFeed(prev => [msg, ...prev].slice(0, 1000));
         } catch { }
       });
+      kes.addEventListener('error', (ev) => console.warn('kick-error', ev));
       kickEsRef.current = kes;
     }
 
@@ -118,12 +126,16 @@ export default function Page() {
       const url3 = `/api/youtube/stream?videos=${encodeURIComponent(b64(ytVideos))}`;
       const yes = new EventSource(url3);
       yes.onopen = () => setYtConnected(true);
+      yes.addEventListener('info', (ev) => {
+        try { console.log('yt-info', JSON.parse((ev as MessageEvent).data)); } catch { }
+      });
       yes.addEventListener('chat', (ev) => {
         try {
           const msg = JSON.parse((ev as MessageEvent).data) as UnifiedChatMessage;
           setFeed(prev => [msg, ...prev].slice(0, 1000));
         } catch { }
       });
+      yes.addEventListener('error', (ev) => console.warn('yt-error', ev));
       ytEsRef.current = yes;
     }
 
@@ -144,7 +156,7 @@ export default function Page() {
   return (
     <div className="container">
       <div className="card" style={{ marginBottom: 16 }}>
-        <h1>Unify My Chats <small className="muted">MVP (leitura apenas)</small></h1>
+        <h1>Unify My Chats <small className="muted">(MVP)</small></h1>
         <p>Informe as URLs dos chats das lives (Twitch, Kick ou YouTube <em>vídeo</em> em live) separados por vírgula ou quebra de linha. Nenhum login é necessário. Envio de mensagens é propositalmente desativado.</p>
         <div className="row" style={{ marginTop: 12 }}>
           <textarea className="input" rows={4} placeholder="Exemplos: https://www.twitch.tv/gaules, https://www.youtube.com/watch?v=XXXXXXXXXXX" value={input} onChange={e => setInput(e.target.value)} />
