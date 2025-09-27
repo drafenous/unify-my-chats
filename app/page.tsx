@@ -100,7 +100,7 @@ export default function Page() {
     // 2) Kick (já tinha)
     const kickSlugs = usable.filter(s => s.platform === 'kick' && s.channel).map(s => s.channel as string);
     if (kickSlugs.length) {
-      const url2 = `/api/kick/stream?slugs=${encodeURIComponent(b64(kickSlugs))}`;
+      const url2 = `/api/kick/ws?slugs=${encodeURIComponent(b64(kickSlugs))}`;
       const kes = new EventSource(url2);
       kes.onopen = () => setKickConnected(true);
       kes.addEventListener('info', (ev) => {

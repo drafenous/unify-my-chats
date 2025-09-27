@@ -121,6 +121,7 @@ textarea {
 }
 .username {
   color: #d7e1ff;
+  word-break: break-word;
 }
 .platform {
   font-weight: 600;
