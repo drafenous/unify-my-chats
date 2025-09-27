@@ -13,13 +13,13 @@ export type Lang = (typeof langs)[keyof typeof langs];
 
 const dictionaries = {
   [langs.en]: () =>
-    import("./dictionaries/en.json").then((module) => module.default),
+    import("../dictionaries/en.json").then((module) => module.default),
   [langs.enUS]: () =>
-    import("./dictionaries/en.json").then((module) => module.default),
+    import("../dictionaries/en.json").then((module) => module.default),
   [langs.pt]: () =>
-    import("./dictionaries/pt.json").then((module) => module.default),
+    import("../dictionaries/pt.json").then((module) => module.default),
   [langs.ptBR]: () =>
-    import("./dictionaries/pt.json").then((module) => module.default),
+    import("../dictionaries/pt.json").then((module) => module.default),
 };
 
 export const getDictionary = async (locale?: Lang) =>

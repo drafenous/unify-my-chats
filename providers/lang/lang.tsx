@@ -1,5 +1,5 @@
 'use client';
-import { Lang } from '@/app/[lang]/dictionaries';
+import { Lang } from '@/app/dictionaries';
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 type LangContextType = {
