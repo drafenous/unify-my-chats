@@ -2,6 +2,8 @@
 
 import {
     createContext,
+    Dispatch,
+    SetStateAction,
     useContext,
     useEffect,
     useMemo,
@@ -13,11 +15,17 @@ import { parseSource } from '@/lib/urlParser';
 import type { UnifiedChatMessage, ParsedSource } from '@/lib/types';
 
 type MainContextValue = {
+    isConnecting: boolean;
+    setIsConnecting: Dispatch<SetStateAction<boolean>>;
+
+    isDisconnecting: boolean;
+    setIsDisconnecting: Dispatch<SetStateAction<boolean>>;
+
     input: string;
-    setInput: (v: string) => void;
+    setInput: Dispatch<SetStateAction<string>>;
 
     sources: ParsedSource[];
-    setSources: (v: ParsedSource[]) => void;
+    setSources: Dispatch<SetStateAction<ParsedSource[]>>;
 
     detect: () => void;
 
@@ -27,13 +35,16 @@ type MainContextValue = {
 
     feed: UnifiedChatMessage[];
     platformsSummary: Record<string, number>;
+
     showPlatformsErrorMessage: boolean;
-    setShowPlatformsErrorMessage: (v: boolean) => void;
+    setShowPlatformsErrorMessage: Dispatch<SetStateAction<boolean>>;
 };
 
 const MainContext = createContext<MainContextValue | undefined>(undefined);
 
 export function MainProvider({ children }: { children: ReactNode }) {
+    const [isConnecting, setIsConnecting] = useState(false);
+    const [isDisconnecting, setIsDisconnecting] = useState(false);
     const [input, setInput] = useState('');
     const [sources, setSources] = useState<ParsedSource[]>([]);
     const [connected, setConnected] = useState(false); // twitch (aggregate)
@@ -107,6 +118,7 @@ export function MainProvider({ children }: { children: ReactNode }) {
 
     function connect() {
         if (connected || kickConnected || ytConnected) return;
+        setIsConnecting(true);
 
         const usable = sources.filter(s =>
             ['twitch', 'youtube', 'kick'].includes(s.platform),
@@ -198,10 +210,12 @@ export function MainProvider({ children }: { children: ReactNode }) {
             ytEsRef.current = yes;
         }
 
+        setIsConnecting(false);
         saveToLocalStorage();
     }
 
     function disconnect() {
+        setIsDisconnecting(true);
         esRef.current?.close();
         esRef.current = null;
         setConnected(false);
@@ -218,6 +232,7 @@ export function MainProvider({ children }: { children: ReactNode }) {
             clearInterval(ytIntervalRef.current);
             ytIntervalRef.current = null;
         }
+        setIsDisconnecting(false);
     }
 
     // encerra conexões ao desmontar o provider
@@ -229,6 +244,10 @@ export function MainProvider({ children }: { children: ReactNode }) {
     }, []);
 
     const value: MainContextValue = {
+        isDisconnecting,
+        setIsDisconnecting,
+        isConnecting,
+        setIsConnecting,
         input,
         setInput,
         sources,

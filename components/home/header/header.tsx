@@ -3,7 +3,7 @@
 import { useMain } from "@/providers/main/main";
 
 export function Header({ texts }: { texts: any }) {
-    const { connect, detect, disconnect, input, isConnected, platformsSummary, setInput, showPlatformsErrorMessage, sources } = useMain()
+    const { connect, detect, disconnect, input, isConnected, platformsSummary, setInput, showPlatformsErrorMessage, sources, isConnecting, isDisconnecting } = useMain()
     return (
         <div className="card" style={{ marginBottom: 16 }}>
             <h1>{texts.app_title} <small className="muted">({texts.app_subtitle})</small></h1>
@@ -17,9 +17,9 @@ export function Header({ texts }: { texts: any }) {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8, minWidth: 180 }}>
                     <button className="btn" onClick={detect}>{texts.form.button_detect_platforms}</button>
                     {!isConnected ? (
-                        <button className="btn" onClick={connect}>{texts.form.button_connect}</button>
+                        <button className="btn" type="button" onClick={connect} disabled={isConnecting}>{texts.form.button_connect}</button>
                     ) : (
-                        <button className="btn secondary" onClick={disconnect}>{texts.form.button_disconnect}</button>
+                        <button className="btn secondary" type="button" onClick={disconnect} disabled={isDisconnecting}>{texts.form.button_disconnect}</button>
                     )}
                 </div>
             </div>
