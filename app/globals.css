@@ -132,3 +132,9 @@ small.muted {
 h1 {
   margin: 0 0 12px 0;
 }
+.w-full {
+  width: 100%;
+}
+.h-full {
+  height: 100%;
+}

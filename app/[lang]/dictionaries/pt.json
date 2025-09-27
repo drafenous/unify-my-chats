@@ -1,0 +1,18 @@
+{
+    "app_title": "Unify My Chats",
+    "app_subtitle": "Beta",
+    "app_description": "Informe as URLs dos chats das lives (<strong>Twitch, Kick ou YouTube vídeo</strong> em live) separados por vírgula ou quebra de linha.",
+    "form": {
+        "input_placeholder": "Exemplos: https://www.twitch.tv/gaules, https://www.youtube.com/watch?v=XXXXXXXXXXX",
+        "button_detect_platforms": "Detectar plataformas",
+        "button_connect": "Conectar",
+        "button_disconnect": "Desconectar",
+        "error_no_valid_url": "Por favor, adicione pelo menos uma URL válida de <strong>Twitch, Kick ou YouTube</strong>."
+    },
+    "feed": {
+        "header": "Feed Unificado",
+        "no_messages": "Sem mensagens ainda. Conecte-se para começar.",
+        "connected": "Conectado",
+        "disconnected": "Desconectado"
+    }
+}
